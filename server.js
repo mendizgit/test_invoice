@@ -12,7 +12,6 @@ app.use(express.static('public'));
 app.get('/api/quotations', (req, res) => {
   try {
     const filePath = path.join(__dirname, 'data', 'quotations.json');
-    console.log('Loading:', filePath);
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     res.json(data);
   } catch (err) {
