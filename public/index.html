@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DPJ Engineering - Quotation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; min-height: 100vh; }
+    header { background: #1a1a2e; color: white; padding: 16px 20px; text-align: center; }
+    header h1 { font-size: 1.1rem; font-weight: 700; }
+    header p { font-size: 0.75rem; color: #aaa; margin-top: 4px; }
+    .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card h3 { font-size: 0.85rem; font-weight: 700; color: #1a1a2e; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 4px; }
+    input, select { width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 0.9rem; color: #333; background: #fafafa; transition: border-color 0.2s; }
+    input:focus, select:focus { outline: none; border-color: #4f46e5; background: white; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .item-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 12px; margin-bottom: 10px; background: #fafafa; }
+    .item-card .item-name { font-weight: 600; font-size: 0.85rem; color: #1a1a2e; margin-bottom: 8px; }
+    .item-card .item-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .item-card .unit-price { font-size: 0.78rem; color: #888; flex: 1; }
+    .qty-input { width: 75px !important; text-align: center; padding: 7px 8px !important; }
+    .item-total { font-weight: 700; font-size: 0.85rem; color: #4f46e5; min-width: 110px; text-align: right; }
+    .summary { background: #1a1a2e; color: white; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; }
+    .summary-row { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 6px; color: #bbb; }
+    .summary-total { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; color: white; border-top: 1px solid #444; padding-top: 10px; margin-top: 8px; }
+    .btn { width: 100%; padding: 13px; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-pdf { background: #4f46e5; color: white; }
+    .btn-whatsapp { background: #25D366; color: white; }
+    .btn-email { background: #EA4335; color: white; }
+    .empty-state { text-align: center; padding: 30px; color: #bbb; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏗️ DPJ Engineering Company</h1>
+  <p>Quotation Generator</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h3>📋 Customer Details</h3>
+    <div class="form-group">
+      <label>Customer Name *</label>
+      <input type="text" id="customerName" placeholder="Enter customer name" />
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      <input type="text" id="customerAddress" placeholder="Enter address" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone (WhatsApp)</label>
+        <input type="tel" id="customerPhone" placeholder="07XXXXXXXX" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="customerEmail" placeholder="email@example.com" />
+      </div>
+      <div class="form-group">
+      <label>Site Address</label>
+      <input type="text" id="siteAddress" placeholder="Enter site address" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date *</label>
+        <input type="date" id="quotationDate" />
+      </div>
+      <div class="form-group">
+        <label>Reference No.</label>
+        <input type="text" id="quotationRef" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔧 Quotation Type</h3>
+    <select id="quotationType" onchange="loadItems()">
+      <option value="">-- Select Quotation Type --</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h3>📝 Inspection Items</h3>
+    <div id="itemsList">
+      <div class="empty-state">Select a quotation type to load items</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🚗 Site Visiting Charges</h3>
+    <div class="form-group">
+      <label>Site Visiting Charges (LKR)</label>
+      <input type="number" id="siteVisitCharge" min="0" step="0.01"
+             placeholder="Enter amount (e.g. 2500)"
+             oninput="validateSiteVisit(this); updateSummary()" />
+      <span id="siteVisitError" style="color:red; font-size:0.78rem; display:none;">
+        ⚠️ Please enter a valid positive number.
+      </span>
+    </div>
+  </div>
+
+  <div class="summary" id="summaryCard" style="display:none">
+    <div id="summaryItems"></div>
+    <div class="summary-total">
+      <span>Grand Total</span>
+      <span id="grandTotal">LKR 0</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📤 Actions</h3>
+    <button class="btn btn-pdf" id="pdfBtn" onclick="generatePDF()">📄 Generate & Download PDF</button>
+    <button class="btn btn-whatsapp" onclick="sendWhatsApp()">💬 Send via WhatsApp</button>
+    <button class="btn btn-email" onclick="sendEmail()">📧 Send via Email</button>
+  </div>
+
+</div>
+
+<script>
+  let quotationsData = {};
+  let currentItems = [];
+
+  // Set defaults
+  const today = new Date();
+  document.getElementById('quotationDate').valueAsDate = today;
+  document.getElementById('quotationRef').value =
+    `DPJ/EC/${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
+
+  // Load quotation types from server
+  fetch('/api/quotations')
+    .then(r => r.json())
+    .then(data => {
+      quotationsData = data;
+      const sel = document.getElementById('quotationType');
+      Object.keys(data).forEach(type => {
+        const o = document.createElement('option');
+        o.value = type; o.textContent = type;
+        sel.appendChild(o);
+      });
+    });
+
+  function loadItems() {
+    const type = document.getElementById('quotationType').value;
+    const list = document.getElementById('itemsList');
+    if (!type) {
+      list.innerHTML = '<div class="empty-state">Select a quotation type to load items</div>';
+      document.getElementById('summaryCard').style.display = 'none';
+      return;
+    }
+    currentItems = quotationsData[type].map(i => ({ ...i, quantity: 0 }));
+    renderItems();
+    updateSummary();
+  }
+
+  function renderItems() {
+    const list = document.getElementById('itemsList');
+    list.innerHTML = '';
+    currentItems.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'item-card';
+      div.innerHTML = `
+        <div class="item-name">${idx + 1}. ${item.item}</div>
+        <div class="item-row">
+          <span class="unit-price">LKR ${item.unitPrice.toLocaleString()} / ${item.unit}</span>
+          <input type="number" class="qty-input" min="0" value="0"
+                 placeholder="0" oninput="updateQuantity(${idx}, this.value)" />
+          <span class="item-total" id="itotal_${idx}">LKR 0</span>
+        </div>`;
+      list.appendChild(div);
+    });
+  }
+
+  function updateQuantity(idx, val) {
+    const qty = Math.max(0, parseInt(val) || 0);
+    currentItems[idx].quantity = qty;
+    const total = currentItems[idx].unitPrice * qty;
+    document.getElementById(`itotal_${idx}`).textContent =
+      qty > 0 ? `LKR ${total.toLocaleString()}` : 'LKR 0';
+    updateSummary();
+  }
+
+  function updateSummary() {
+      const selected = currentItems.filter(i => i.quantity > 0);
+      const siteCharge = parseFloat(document.getElementById('siteVisitCharge').value) || 0;
+      const card = document.getElementById('summaryCard');
+      if (!selected.length && siteCharge === 0) { card.style.display = 'none'; return; }
+      card.style.display = 'block';
+      let grand = 0, html = '';
+      selected.forEach(i => {
+        const t = i.unitPrice * i.quantity;
+        grand += t;
+        html += `<div class="summary-row"><span>${i.item} ×${i.quantity}</span><span>LKR ${t.toLocaleString()}</span></div>`;
+      });
+      if (siteCharge > 0) {
+        grand += siteCharge;
+        html += `<div class="summary-row"><span>Site Visiting Charges</span><span>LKR ${siteCharge.toLocaleString()}</span></div>`;
+      }
+      document.getElementById('summaryItems').innerHTML = html;
+      document.getElementById('grandTotal').textContent = `LKR ${grand.toLocaleString()}`;
+    }
+
+  function validateSiteVisit(input) {
+      const err = document.getElementById('siteVisitError');
+      const val = parseFloat(input.value);
+      if (input.value !== '' && (isNaN(val) || val < 0)) {
+        err.style.display = 'block';
+        input.style.borderColor = 'red';
+      } else {
+        err.style.display = 'none';
+        input.style.borderColor = '#e0e0e0';
+      }
+    }
+
+    function validate() {
+      if (!document.getElementById('customerName').value.trim()) { alert('⚠️ Enter customer name.'); return false; }
+      if (!document.getElementById('quotationType').value) { alert('⚠️ Select quotation type.'); return false; }
+      if (!currentItems.some(i => i.quantity > 0)) { alert('⚠️ Enter quantity for at least one item.'); return false; }
+      const siteVal = document.getElementById('siteVisitCharge').value;
+      if (siteVal !== '' && (isNaN(parseFloat(siteVal)) || parseFloat(siteVal) < 0)) {
+        alert('⚠️ Enter a valid site visiting charge.'); return false;
+      }
+      return true;
+    }
+
+  function getPayload() {
+      return {
+        customerName: document.getElementById('customerName').value.trim(),
+        customerAddress: document.getElementById('customerAddress').value.trim(),
+        customerPhone: document.getElementById('customerPhone').value.trim(),
+        customerEmail: document.getElementById('customerEmail').value.trim(),
+        quotationType: document.getElementById('quotationType').value,
+        quotationRef: document.getElementById('quotationRef').value,
+        date: document.getElementById('quotationDate').value,
+        siteAddress: document.getElementById('siteAddress').value.trim(),
+        siteVisitCharge: parseFloat(document.getElementById('siteVisitCharge').value) || 0,
+        items: currentItems.filter(i => i.quantity > 0)
+      };
+    }
+
+  async function generatePDF() {
+    if (!validate()) return;
+    const btn = document.getElementById('pdfBtn');
+    btn.textContent = '⏳ Generating PDF...'; btn.disabled = true;
+    try {
+      const res = await fetch('/api/invoice/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(getPayload())
+      });
+      if (!res.ok) throw new Error('Server error');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Quotation_${document.getElementById('quotationRef').value.replace(/\//g,'_')}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch(e) {
+      alert('❌ PDF generation failed. Check console.'); console.error(e);
+    }
+    btn.textContent = '📄 Generate & Download PDF'; btn.disabled = false;
+  }
+
+  function sendWhatsApp() {
+    if (!validate()) return;
+    const phone = document.getElementById('customerPhone').value.replace(/^0/, '94');
+    if (!phone) { alert('⚠️ Enter customer phone number.'); return; }
+    const msg = encodeURIComponent(`Dear Customer,\nPlease find attached your quotation from DPJ Engineering Company.\nRef: ${document.getElementById('quotationRef').value}`);
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+  }
+
+  function sendEmail() {
+    if (!validate()) return;
+    const email = document.getElementById('customerEmail').value;
+    if (!email) { alert('⚠️ Enter customer email.'); return; }
+    const ref = document.getElementById('quotationRef').value;
+    window.location.href = `mailto:${email}?subject=Quotation ${ref} - DPJ Engineering Company&body=Dear Customer,%0A%0APlease find attached your quotation.%0A%0ARef: ${ref}%0A%0ARegards,%0ADPJ Engineering Company`;
+  }
+</script>
+</body>
+</html>

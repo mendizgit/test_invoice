@@ -1,0 +1,18 @@
+{
+  "Residential": [
+    { "item": "Visual Inspection", "unitPrice": 5000, "unit": "per point" },
+    { "item": "Load Testing", "unitPrice": 3500, "unit": "per unit" },
+    { "item": "Panel Inspection", "unitPrice": 5000, "unit": "per panel" },
+    { "item": "Thermographic Scan", "unitPrice": 8000, "unit": "per scan" },
+    { "item": "Inspection of LPS earth one nos. of pit", "unitPrice": 5000, "unit": "per point" },
+    { "item": "Issuing Earth value report", "unitPrice": 3000, "unit": "per site" }
+  ],
+  "Commercial": [
+    { "item": "Visual Inspection", "unitPrice": 5000, "unit": "per point" },
+    { "item": "Load Testing", "unitPrice": 3500, "unit": "per unit" },
+    { "item": "Panel Inspection", "unitPrice": 5000, "unit": "per panel" },
+    { "item": "Thermographic Scan", "unitPrice": 8000, "unit": "per scan" },
+    { "item": "Inspection of LPS earth one nos. of pit", "unitPrice": 5000, "unit": "per point" },
+    { "item": "Issuing Earth value report", "unitPrice": 5000, "unit": "per site" }
+  ]
+}
